@@ -1,19 +1,19 @@
-
 #include <stdio.h>
 
-int flag[500]={0};
-int x=0;
-int y=0;
-int z=0;
+int flag[500]={0}; // Array to mark the number of times each node is traversed
+int x=0; // Counter to count the number of paths from the start node to the end node
+int y=0; // Start node
+int z=0; // End node
 
 struct Node
 {
-    int nodeid;
-    int adjcount;
-    int adjs[10];
-    int costs[10];
+    int nodeid; // Node ID
+    int adjcount; // Number of adjacent nodes
+    int adjs[10]; // Array to store adjacent nodes
+    int costs[10]; // Array to store the cost of reaching adjacent nodes
 };
 
+// Function to add a new node
 int addNode (struct Node * p, int nid, int count)
 {
     int i =0, ncount = count;
@@ -23,13 +23,14 @@ int addNode (struct Node * p, int nid, int count)
     }
     if (i == count)
     {
-        p[i].nodeid = nid;
-        p[i].adjcount = 0;
-        ncount++;
+        p[i].nodeid = nid; // Assign the node ID
+        p[i].adjcount = 0; // Initialize the number of adjacent nodes to zero
+        ncount++; // Increment the count of nodes
     }
-    return ncount;
+    return ncount; // Return the updated count of nodes
 }
 
+// Function to add adjacent nodes
 void addAdjacent (struct Node *p, int nid1, int nid2, int cost, int count)
 {
     int i =0, index;
@@ -38,44 +39,44 @@ void addAdjacent (struct Node *p, int nid1, int nid2, int cost, int count)
         if (p[i].nodeid == nid1)
         {
             int c = p[i].adjcount;
-            p[i].adjs[c] = nid2;
-            p[i].costs[c] = cost;
-            p[i].adjcount = c+1;
+            p[i].adjs[c] = nid2; // Add the adjacent node
+            p[i].costs[c] = cost; // Assign the cost of reaching the adjacent node
+            p[i].adjcount = c+1; // Increment the count of adjacent nodes
 
             break;
         }
     }
 }
 
+// Function to check if a node is already added to the list
 int added (int * list, int lcount, int nid)
 {
     int i =0;
     for (i=0;i<lcount;i++)
     {
-        if (list[i] == nid) { return 1; }
+        if (list[i] == nid) { return 1; } // If the node is already in the list, return 1
     }
-    return 0;
+    return 0; // If the node is not in the list, return 0
 }
 
-
+// Recursive function to find all paths between two nodes
 void findpath (struct Node * p, int count, int start, int end, int * list, int *clist, int lcount)
 {
     int index = 0, i=0;
 
-
-    //check if list contains the end node
+    // Check if the list contains the end node
     if (list[lcount-1] == end)
     {
-        x++;
+        x++; // Increment the number of paths found
         int tcost = 0;
         printf ("\n");
         for (i=0;i<lcount;i++)
         {
-            flag[list[i]]++;
-            printf (" %d ", list[i]);
-            tcost += clist[i];
+            flag[list[i]]++; // Mark the node as traversed
+            printf (" %d ", list[i]); // Print the node
+            tcost += clist[i]; // Calculate the total cost
         }
-        printf (" cost = %d", tcost);
+        printf (" cost = %d", tcost); // Print the total cost
         return;
     }
 
@@ -99,42 +100,44 @@ void findpath (struct Node * p, int count, int start, int end, int * list, int *
     }
 }
 
-
 int main() {
-    // Write C code here
     //printf("Hello world");
 
-    struct Node nodes[50];
-    int nodecount = 0;
+    struct Node nodes[50]; // Array to store the nodes
+    int nodecount = 0; // Count of the nodes
     int n1=0, n2=0, c = 0;
 
+    // Inputting node connections and costs
     while (1)
     {
         printf ("n1, n2, cost ? ");
         scanf("%d %d %d", &n1, &n2, &c);
-        if (n1 == -9 || n2 == -9 || c== -9) {break;}
-        nodecount = addNode (&nodes[0], n1, nodecount);
-        nodecount = addNode (&nodes[0], n2, nodecount);
+        if (n1 == -9 || n2 == -9 || c== -9) {break;} // Termination condition
+        nodecount = addNode (&nodes[0], n1, nodecount); // Add the first node
+        nodecount = addNode (&nodes[0], n2, nodecount); // Add the second node
 
-        addAdjacent (&nodes[0], n1, n2, c, nodecount);
-        addAdjacent (&nodes[0], n2, n1, c, nodecount);
+        addAdjacent (&nodes[0], n1, n2, c, nodecount); // Add the adjacent nodes
+        addAdjacent (&nodes[0], n2, n1, c, nodecount); // Add the adjacent nodes
     }
 
+    // Inputting start and end nodes
     int start, end;
     printf ("start, end ? ");
     scanf ("%d %d", &start, &end);
     y=start;
     z=end;
-    int list[50], clist[50], lcount = 0;
+    int list[50], clist[50], lcount = 0; // Arrays to store the list of nodes and their costs
     list[0] = start; clist[0] = 0; lcount = 1;
 
+    // Finding all paths between start and end nodes
     findpath (nodes, nodecount, start, end, list, clist, lcount);
 
-    printf("Essential nodes :");
+    // Printing essential nodes
+    printf("\nEssential nodes :");
     for(int i=0;i<500;i++){
         if(flag[i]==x){
-        if(i!=y&&i!=z)
-         printf("%d ",i);
+            if(i!=y&&i!=z)
+                printf("%d ",i);
         }
     }
 
